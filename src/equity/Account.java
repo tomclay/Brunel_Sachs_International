@@ -1,6 +1,5 @@
 package equity;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -9,48 +8,34 @@ import java.util.Scanner;
 
 public class Account {
 
-//  Attempt to aquire a lock
-//    public synchronized void acquireLock() throws InterruptedException{
-//        Thread me = Thread.currentThread(); // get a ref to the current thread
-//        System.out.println(me.getName()+" is attempting to acquire a lock!");
-//        ++threadsWaiting;
-//        while (accessing) {  // while someone else is accessing or threadsWaiting > 0
-//            System.out.println(me.getName()+" waiting to get a lock as someone else is accessing...");
-//            //wait for the lock to be released - see releaseLock() below
-//            wait();
-//        }
-//        // nobody has got a lock so get one
-//        --threadsWaiting;
-//        accessing = true;
-//        System.out.println(me.getName()+" got a lock!");
-//    }
-//
-//    // Releases a lock to when a thread is finished
-//
-//    public synchronized void releaseLock() {
-//        //release the lock and tell everyone
-//        accessing = false;
-//        notifyAll();
-//        Thread me = Thread.currentThread(); // get a ref to the current thread
-//        System.out.println(me.getName()+" released a lock!");
-//    }
 
-    // Database stuff
+    private static Mainframe mainframe;
+    private static String account_ID;
+    private static Scanner input;
 
 
+    public static void main(String[] args) {
+        start();
+    }
 
-    // Start
-    public synchronized void start() {
+    public static synchronized void start() {
+    input = new Scanner(System.in);
 
-        Scanner input = new Scanner(System.in);
+    System.out.println("Welcome to Brunel Sachs International. Please enter in your account number:");
 
-        int choice = 0, acc_no = 0;
+    account_ID = input.nextLine();
 
-        System.out.println("Welcome to Brunel Sachs International. Please enter in your account number:");
+    mainframe = new Mainframe(account_ID);
 
-        acc_no = input.nextInt();
+    choices();
 
-        while (choice != 1 && choice != 2 && choice != 3  && choice != 4 && choice != 5)
+    }
+
+    public static synchronized void choices(){
+
+        int user_choice = 0;
+
+        while (user_choice != 1 && user_choice != 2 && user_choice != 3  && user_choice != 4 && user_choice != 5)
         {
             System.out.println("What would you like to do?");
             System.out.println("1. See my balance");
@@ -59,30 +44,67 @@ public class Account {
             System.out.println("4. Transfer funds");
             System.out.println("5. Exit");
 
-            choice = input.nextInt();
+            user_choice = input.nextInt();
         }
 
+        switch (user_choice){
+            case 1: balance();
+                break;
+            case 2: deposit();
+                break;
+            case 3: withdraw();
+                break;
+            case 4: transfer();
+                break;
+            case 5: exit();
+                break;
+            default: exit();
+                break;
+        }
+
+        user_choice = 0;
     }
 
-    // Show balance
-    public synchronized void balance(int acc_no) {
-
+    public static synchronized void balance() {
+        float result = mainframe.acc_lookup();
+        System.out.println("Your account balance: " + result + ".");
+        choices();
     }
 
-    // Deposit
-    public synchronized void deposit(int acc_no) {
 
+    public static synchronized void deposit() {
+        System.out.println("Please enter the amount to deposit.");
+        float amount = Float.parseFloat(input.nextLine());
+        float result = Mainframe.add(amount);
+        System.out.println("Operation completed successfully");
+        System.out.println("Your new balance is: " + result + ".");
+        choices();
     }
 
-    // Withdraw
-    public synchronized void withdraw(int acc_no) {
 
+    public static synchronized void withdraw() {
+        System.out.println("Please enter the amount to withdraw.");
+        float amount = Float.parseFloat(input.nextLine());
+        float result = Mainframe.subtract(amount);
+        System.out.println("Operation completed successfully");
+        System.out.println("Your new balance is: " + result + ".");
+        choices();
     }
 
     // Transfer
-    public synchronized void transfer(int acc_no) {
-
+    public static synchronized void transfer() {
+        System.out.println("Please enter the ID of the account you wish to transfer money to.");
+        String ID = input.nextLine();
+        System.out.println("Please enter the amount you wish to transfer.");
+        float amount = Float.parseFloat(input.nextLine());
+        Mainframe mainframe2 = new Mainframe(ID);
+        mainframe.subtract(amount);
+        mainframe2.add(amount);
+        choices();
     }
 
-    // Exit
+    public static synchronized void exit(){
+        System.out.println("Thank you for using Brunel Sachs International. Have a jolly nice say.");
+        System.exit(0);
+    }
 }
