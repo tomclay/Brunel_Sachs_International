@@ -13,7 +13,6 @@ public class Account {
     private static String account_ID;
     private static Scanner input;
 
-
     public static void main(String[] args) {
         start();
     }
@@ -21,7 +20,7 @@ public class Account {
     public static synchronized void start() {
     input = new Scanner(System.in);
 
-    System.out.println("Welcome to Brunel Sachs International. Please enter in your account number:");
+    System.out.println("Welcome to Brunel Sachs International. Please enter in your account number.");
 
     account_ID = input.nextLine();
 
@@ -66,45 +65,46 @@ public class Account {
     }
 
     public static synchronized void balance() {
-        float result = mainframe.acc_lookup();
-        System.out.println("Your account balance: " + result + ".");
+        float result = mainframe.get_bal();
+        System.out.println("Your account balance: £" + result);
         choices();
     }
 
 
     public static synchronized void deposit() {
+        input = new Scanner(System.in);
         System.out.println("Please enter the amount to deposit.");
-        float amount = Float.parseFloat(input.nextLine());
-        float result = Mainframe.add(amount);
+        String amount = input.nextLine();
+        float result = Mainframe.add(Float.parseFloat(amount));
         System.out.println("Operation completed successfully");
-        System.out.println("Your new balance is: " + result + ".");
+        System.out.println("Your new balance is: £" + mainframe.accBalance);
         choices();
     }
 
 
     public static synchronized void withdraw() {
+        input = new Scanner(System.in);
         System.out.println("Please enter the amount to withdraw.");
         float amount = Float.parseFloat(input.nextLine());
         float result = Mainframe.subtract(amount);
-        System.out.println("Operation completed successfully");
-        System.out.println("Your new balance is: " + result + ".");
+        System.out.println("Your new balance is: £" + mainframe.accBalance);
         choices();
     }
 
     // Transfer
     public static synchronized void transfer() {
+        input = new Scanner(System.in);
         System.out.println("Please enter the ID of the account you wish to transfer money to.");
         String ID = input.nextLine();
         System.out.println("Please enter the amount you wish to transfer.");
         float amount = Float.parseFloat(input.nextLine());
-        Mainframe mainframe2 = new Mainframe(ID);
-        mainframe.subtract(amount);
-        mainframe2.add(amount);
+        float dest_account_new_bal = mainframe.wire(ID,amount);
+        System.out.println("The account " + ID + " now has the balance of £" + dest_account_new_bal);
         choices();
     }
 
     public static synchronized void exit(){
-        System.out.println("Thank you for using Brunel Sachs International. Have a jolly nice say.");
+        System.out.println("Thank you for using Brunel Sachs International. Have a jolly nice day.");
         System.exit(0);
     }
 }
