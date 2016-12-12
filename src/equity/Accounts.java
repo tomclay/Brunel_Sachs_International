@@ -6,10 +6,10 @@ import java.util.Scanner;
  * Created by tomclay on 08/12/2016.
  */
 
-public class Account {
+public class Accounts {
 
 
-    private static Mainframe mainframe;
+    private static Database database;
     private static String account_ID;
     private static Scanner input;
 
@@ -24,7 +24,7 @@ public class Account {
 
     account_ID = input.nextLine();
 
-    mainframe = new Mainframe(account_ID);
+    database = new Database(account_ID);
 
     choices();
 
@@ -65,7 +65,7 @@ public class Account {
     }
 
     public static synchronized void balance() {
-        float result = mainframe.get_bal();
+        float result = database.get_bal();
         System.out.println("Your account balance: £" + result);
         choices();
     }
@@ -75,9 +75,9 @@ public class Account {
         input = new Scanner(System.in);
         System.out.println("Please enter the amount to deposit.");
         String amount = input.nextLine();
-        float result = Mainframe.add(Float.parseFloat(amount));
+        float result = Database.add(Float.parseFloat(amount));
         System.out.println("Operation completed successfully");
-        System.out.println("Your new balance is: £" + mainframe.accBalance);
+        System.out.println("Your new balance is: £" + database.accBalance);
         choices();
     }
 
@@ -86,8 +86,8 @@ public class Account {
         input = new Scanner(System.in);
         System.out.println("Please enter the amount to withdraw.");
         float amount = Float.parseFloat(input.nextLine());
-        float result = Mainframe.subtract(amount);
-        System.out.println("Your new balance is: £" + mainframe.accBalance);
+        float result = Database.subtract(amount);
+        System.out.println("Your new balance is: £" + database.accBalance);
         choices();
     }
 
@@ -98,7 +98,7 @@ public class Account {
         String ID = input.nextLine();
         System.out.println("Please enter the amount you wish to transfer.");
         float amount = Float.parseFloat(input.nextLine());
-        float dest_account_new_bal = mainframe.wire(ID,amount);
+        float dest_account_new_bal = database.wire(ID,amount);
         System.out.println("The account " + ID + " now has the balance of £" + dest_account_new_bal);
         choices();
     }

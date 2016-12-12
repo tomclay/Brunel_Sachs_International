@@ -11,12 +11,12 @@ import java.sql.Statement;
  * Created by tomclay on 08/12/2016.
  */
 
-public class Mainframe extends Account {
+public class Database extends Accounts {
 
     public static float accBalance;
     public static String accId;
 
-    public Mainframe(String ID_input){
+    public Database(String ID_input){
         accId = ID_input;
     }
 

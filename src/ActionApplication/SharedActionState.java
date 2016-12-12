@@ -1,8 +1,5 @@
 package ActionApplication;
 
-import java.net.*;
-import java.io.*;
-
 public class SharedActionState{
 	
 	private SharedActionState mySharedObj;
@@ -51,7 +48,7 @@ public class SharedActionState{
     		System.out.println(myThreadName + " received "+ theInput);
     		String theOutput = null;
     		// Check what the client said
-    		if (theInput.equalsIgnoreCase("Do my action!")) {
+    		if (theInput.equalsIgnoreCase("Do my ActionApplication!")) {
     			//Correct request
     			if (myThreadName.equals("ActionServerThread1")) {
     				/*  Add 20 to the variable
@@ -62,7 +59,7 @@ public class SharedActionState{
        				mySharedVariable = mySharedVariable * 5;
        				mySharedVariable = mySharedVariable / 3;
    				System.out.println(myThreadName + " made the SharedVariable " + mySharedVariable);
-    				theOutput = "Do action completed.  Shared Variable now = " + mySharedVariable;
+    				theOutput = "Do ActionApplication completed.  Shared Variable now = " + mySharedVariable;
     			}
     			else if (myThreadName.equals("ActionServerThread2")) {
     				/*	Subtract 5 from the variable
@@ -74,7 +71,7 @@ public class SharedActionState{
        				mySharedVariable = mySharedVariable / 2.5;
     					
     				System.out.println(myThreadName + " made the SharedVariable " + mySharedVariable);
-    				theOutput = "Do action completed.  Shared Variable now = " + mySharedVariable;
+    				theOutput = "Do ActionApplication completed.  Shared Variable now = " + mySharedVariable;
 
     			}
        			else if (myThreadName.equals("ActionServerThread3")) {
@@ -87,7 +84,7 @@ public class SharedActionState{
        				mySharedVariable = mySharedVariable * 33;
  
        				System.out.println(myThreadName + " made the SharedVariable " + mySharedVariable);
-    				theOutput = "Do action completed.  Shared Variable now = " + mySharedVariable;
+    				theOutput = "Do ActionApplication completed.  Shared Variable now = " + mySharedVariable;
 
        			}
        			else if (myThreadName.equals("ActionServerThread4")) {
@@ -99,12 +96,12 @@ public class SharedActionState{
        				mySharedVariable = mySharedVariable / 10;
        				mySharedVariable = mySharedVariable - 1;
     				System.out.println(myThreadName + " made the SharedVariable " + mySharedVariable);
-    				theOutput = "Do action completed.  Shared Variable now = " + mySharedVariable;
+    				theOutput = "Do ActionApplication completed.  Shared Variable now = " + mySharedVariable;
        			}
        			else {System.out.println("Error - thread call not recognised.");}
     		}
     		else { //incorrect request
-    			theOutput = myThreadName + " received incorrect request - only understand \"Do my action!\"";
+    			theOutput = myThreadName + " received incorrect request - only understand \"Do my ActionApplication!\"";
 		
     		}
  
