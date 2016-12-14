@@ -1,6 +1,9 @@
 package equity;
 
+import java.lang.*;
 import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
+
 
 /**
  * Created by tomclay on 08/12/2016.
@@ -12,10 +15,39 @@ public class Accounts {
     private static Database database;
     private static String account_ID;
     private static Scanner input;
+    public static BlockingQueue<String> messageTunnel;
+    private boolean accessing=false; // true a thread has a lock, false otherwise
+    private int threadsWaiting=0; // number of waiting writers
 
-    public static void main(String[] args) {
-        start();
+    public Accounts (BlockingQueue<String> input) {
+        this.messageTunnel = input;
     }
+
+    public synchronized void acquireLock() throws InterruptedException{
+        java.lang.Thread me = java.lang.Thread.currentThread(); // get a ref to the current thread
+        System.out.println(me.getName()+" is attempting to acquire a lock!");
+        ++threadsWaiting;
+        while (accessing) {  // while someone else is accessing or threadsWaiting > 0
+            System.out.println(me.getName()+" waiting to get a lock as someone else is accessing...");
+            //wait for the lock to be released - see releaseLock() below
+            wait();
+        }
+        // nobody has got a lock so get one
+        --threadsWaiting;
+        accessing = true;
+        System.out.println(me.getName()+" got a lock!");
+    }
+
+    // Releases a lock to when a thread is finished
+
+    public synchronized void releaseLock() {
+        //release the lock and tell everyone
+        accessing = false;
+        notifyAll();
+        java.lang.Thread me = java.lang.Thread.currentThread(); // get a ref to the current thread
+        System.out.println(me.getName()+" released a lock!");
+    }
+
 
     public static synchronized void start() {
     input = new Scanner(System.in);
@@ -106,5 +138,6 @@ public class Accounts {
     public static synchronized void exit(){
         System.out.println("Thank you for using Brunel Sachs International. Have a jolly nice day.");
         System.exit(0);
+
     }
 }
