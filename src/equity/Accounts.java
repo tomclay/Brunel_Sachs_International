@@ -2,7 +2,6 @@ package equity;
 
 import java.lang.*;
 import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
 
 
 /**
@@ -11,19 +10,14 @@ import java.util.concurrent.BlockingQueue;
 
 public class Accounts {
 
-
-    private static Database database;
-    private static String account_ID;
-    private static Scanner input;
-    public static BlockingQueue<String> messageTunnel;
+    private  Database database;
+    private  String account_ID;
+    private  Scanner input;
     private boolean accessing=false; // true a thread has a lock, false otherwise
     private int threadsWaiting=0; // number of waiting writers
 
-    public Accounts (BlockingQueue<String> input) {
-        this.messageTunnel = input;
-    }
 
-    public synchronized void acquireLock() throws InterruptedException{
+    public synchronized void acquireLock() throws InterruptedException {
         java.lang.Thread me = java.lang.Thread.currentThread(); // get a ref to the current thread
         System.out.println(me.getName()+" is attempting to acquire a lock!");
         ++threadsWaiting;
@@ -49,33 +43,36 @@ public class Accounts {
     }
 
 
-    public static synchronized void start() {
-    input = new Scanner(System.in);
+    public synchronized void start()  {
 
-    System.out.println("Welcome to Brunel Sachs International. Please enter in your account number.");
+    accessThread.sendMessage("Welcome to Brunel Sachs International. Please enter in your account number.");
 
-    account_ID = input.nextLine();
+    try {
+        account_ID = accessThread.incomingMessage().take();
+        System.out.println(account_ID);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
 
     database = new Database(account_ID);
+
+    accessThread.sendMessage("What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds 5. Exit");
 
     choices();
 
     }
 
-    public static synchronized void choices(){
+    public synchronized void choices(){
 
         int user_choice = 0;
 
         while (user_choice != 1 && user_choice != 2 && user_choice != 3  && user_choice != 4 && user_choice != 5)
         {
-            System.out.println("What would you like to do?");
-            System.out.println("1. See my balance");
-            System.out.println("2. Deposit funds");
-            System.out.println("3. Withdraw funds");
-            System.out.println("4. Transfer funds");
-            System.out.println("5. Exit");
-
-            user_choice = input.nextInt();
+            try {
+                user_choice = Integer.parseInt(accessThread.incomingMessage().take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         switch (user_choice){
@@ -96,48 +93,60 @@ public class Accounts {
         user_choice = 0;
     }
 
-    public static synchronized void balance() {
+    public synchronized void balance() {
         float result = database.get_bal();
-        System.out.println("Your account balance: £" + result);
+        accessThread.sendMessage("Your account balance: £" + result + "\n" + "What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds 5. Exit");
         choices();
     }
 
 
-    public static synchronized void deposit() {
-        input = new Scanner(System.in);
-        System.out.println("Please enter the amount to deposit.");
-        String amount = input.nextLine();
+    public synchronized void deposit() {
+        accessThread.sendMessage("Please enter the amount to deposit.");
+
+        String amount = "";
+        try {
+            amount = accessThread.incomingMessage().take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         float result = Database.add(Float.parseFloat(amount));
-        System.out.println("Operation completed successfully");
-        System.out.println("Your new balance is: £" + database.accBalance);
+        accessThread.sendMessage("Your new balance is: £" + database.accBalance + "\n" + "What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds 5. Exit");
         choices();
     }
 
 
-    public static synchronized void withdraw() {
-        input = new Scanner(System.in);
-        System.out.println("Please enter the amount to withdraw.");
-        float amount = Float.parseFloat(input.nextLine());
+    public synchronized void withdraw() {
+        accessThread.sendMessage("Please enter the amount to withdraw.");
+        float amount = 0;
+
+        try {
+            amount = Float.parseFloat(accessThread.incomingMessage().take());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         float result = Database.subtract(amount);
-        System.out.println("Your new balance is: £" + database.accBalance);
+        accessThread.sendMessage("Your new balance is: £" + database.accBalance + "\n" + "What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds 5. Exit");
         choices();
     }
 
     // Transfer
-    public static synchronized void transfer() {
+    public synchronized void transfer() {
         input = new Scanner(System.in);
-        System.out.println("Please enter the ID of the account you wish to transfer money to.");
+        accessThread.sendMessage("Please enter the ID of the account you wish to transfer money to.");
         String ID = input.nextLine();
-        System.out.println("Please enter the amount you wish to transfer.");
+        accessThread.sendMessage("Please enter the amount you wish to transfer.");
         float amount = Float.parseFloat(input.nextLine());
         float dest_account_new_bal = database.wire(ID,amount);
         System.out.println("The account " + ID + " now has the balance of £" + dest_account_new_bal);
         choices();
     }
 
-    public static synchronized void exit(){
-        System.out.println("Thank you for using Brunel Sachs International. Have a jolly nice day.");
-        System.exit(0);
+    public synchronized void exit(){
+        accessThread.sendMessage("Thank you for using Brunel Sachs International. Have a jolly nice day.");
+        //System.exit(0);
 
     }
 }

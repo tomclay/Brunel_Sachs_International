@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.concurrent.BlockingQueue;
 
 
 /**
@@ -16,10 +17,9 @@ public class Database extends Accounts {
     public static float accBalance;
     public static String accId;
 
-    public Database(String ID_input){
-        accId = ID_input;
+    public Database(String account_id) {
+        this.accId = account_id;
     }
-
 
     // Get the account from the database
     public static float get_bal() {

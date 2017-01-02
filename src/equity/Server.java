@@ -16,11 +16,10 @@ public class Server {
         boolean listening = true;
         String MainframeName = "BrunelMainframe";
         int portNumber = 4545;
-        BlockingQueue<String> messageTunnel = new LinkedBlockingQueue<>();
 
 
         //Create the shared object in the global scope...
-        Accounts sharedAccounts = new Accounts(messageTunnel);
+        Accounts sharedAccounts = new Accounts();
 
         // Make the server socket
         try {
