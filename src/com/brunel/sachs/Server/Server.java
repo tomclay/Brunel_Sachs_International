@@ -19,7 +19,7 @@ public class Server {
 
 
         //Create the shared object in the global scope...
-        Accounts sharedAccounts = new Accounts();
+        Account sharedAccount = new Account();
 
         // Make the Server socket
         try {
@@ -32,10 +32,10 @@ public class Server {
 
         //Got to do this in the correct order with only four clients!  Can automate this...
         while (listening){
-            new Thread(MainframeServerSocket.accept(), "ServerThread1", sharedAccounts).start();
-            new Thread(MainframeServerSocket.accept(), "ServerThread2", sharedAccounts).start();
-            new Thread(MainframeServerSocket.accept(), "ServerThread3", sharedAccounts).start();
-            new Thread(MainframeServerSocket.accept(), "ServerThread4", sharedAccounts).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread1", sharedAccount).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread2", sharedAccount).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread3", sharedAccount).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread4", sharedAccount).start();
             System.out.println("New " + MainframeName + " thread started.");
         }
         MainframeServerSocket.close();

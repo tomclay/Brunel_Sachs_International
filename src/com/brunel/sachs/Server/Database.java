@@ -11,29 +11,23 @@ import java.sql.Statement;
  * Created by tomclay on 08/12/2016.
  */
 
-public class Database extends Accounts {
-
-    public static float accBalance;
-    public static String accId;
-
-    public Database(String account_id) {
-        this.accId = account_id;
-    }
+public class Database extends Account {
 
     // Get the account from the database
-    public synchronized static float get_bal() {
+    public synchronized static float get_bal(int accID) {
 
         Connection c;
         Statement stmt;
+        float balance = 00;
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:mainframe.db");
             c.setAutoCommit(false);
 
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT * FROM ACCOUNTS WHERE ID = " + accId + ";");
+            ResultSet rs = stmt.executeQuery( "SELECT * FROM ACCOUNTS WHERE ID = " + accID + ";");
             while ( rs.next() ) {
-                accBalance = rs.getFloat("balance");
+                balance = rs.getFloat("balance");
             }
             rs.close();
             stmt.close();
@@ -43,25 +37,11 @@ public class Database extends Accounts {
             System.exit(0);
         }
 
-        return accBalance;
-    }
-
-    public static float add(float amount){
-        float newBalance = accBalance + amount;
-        accBalance = newBalance;
-        update_bal(String.valueOf(newBalance));
-        return accBalance;
-    }
-
-    public static float subtract(float amount){
-        float newBalance = accBalance - amount;
-        accBalance = newBalance;
-        update_bal(String.valueOf(newBalance));
-        return accBalance;
+        return balance;
     }
 
 
-    public synchronized static void update_bal(String amount){
+    public synchronized static void update_bal(int accID, float amount){
         Connection c;
         Statement stmt;
         try {
@@ -69,7 +49,7 @@ public class Database extends Accounts {
             c = DriverManager.getConnection("jdbc:sqlite:mainframe.db");
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            String sql = "UPDATE ACCOUNTS SET BALANCE =" + amount + " WHERE ID =" + accId + ";";
+            String sql = "UPDATE ACCOUNTS SET BALANCE =" + amount + " WHERE ID =" + accID + ";";
             stmt.executeUpdate(sql);
             c.commit();
             stmt.close();
@@ -81,45 +61,14 @@ public class Database extends Accounts {
 
     }
 
-    public synchronized static float wire(String dest_account_ID, float amount){
+    public synchronized static float wire(int orig_acc_ID, int dest_acc_ID, float amount){
         // assuming global source account
 
-        float dest_account_bal = 0, dest_account_new_bal = 0;
+        float dest_account_new_bal = 0;
 
         // frist, subtract the to-be-moved amount from the source account
-        subtract(amount);
-
-        // Can't use the standard add method as I am going to use another account ID
-        Connection c;
-        Statement stmt;
-        try {
-            Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:mainframe.db");
-            c.setAutoCommit(false);
-
-            stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT * FROM ACCOUNTS WHERE ID = " + dest_account_ID + ";");
-            while ( rs.next() ) {
-                dest_account_bal = rs.getFloat("balance");
-            }
-
-            rs.close();
-            stmt.close();
-
-
-            dest_account_new_bal = dest_account_bal + amount;
-
-            stmt = c.createStatement();
-            String sql = "UPDATE ACCOUNTS SET BALANCE =" + dest_account_new_bal + " WHERE ID =" + dest_account_ID + ";";
-            stmt.executeUpdate(sql);
-            c.commit();
-            stmt.close();
-            c.close();
-
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            System.exit(0);
-        }
+        subtract(orig_acc_ID,amount);
+        dest_account_new_bal = add(dest_acc_ID, amount);
 
         return dest_account_new_bal;
 

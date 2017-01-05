@@ -5,7 +5,7 @@ import java.sql.*;
 /**
  * Created by Tom Clay ESQ. on 08/12/2016.
  */
-public class createDb extends Accounts {
+public class createDb extends Account {
 
     public static void create() {
 

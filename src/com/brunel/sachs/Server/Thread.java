@@ -3,7 +3,6 @@ package com.brunel.sachs.Server;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by Tom Clay ESQ. on 12/12/2016.
@@ -12,16 +11,16 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class Thread extends java.lang.Thread {
 
     private Socket serverSocket = null;
-    private static Accounts accounts;
+    private static Account account;
     private static String localServerThreadName;
     private static PrintWriter out;
     //private static BufferedReader in;
     private static Scanner in;
 
     //Setup the thread
-    public Thread(Socket actionSocket, String ServerThreadName, Accounts accountInstance) {
+    public Thread(Socket actionSocket, String ServerThreadName, Account accountInstance) {
         this.serverSocket = actionSocket;
-        accounts = accountInstance;
+        account = accountInstance;
         localServerThreadName = ServerThreadName;
     }
 
@@ -35,10 +34,11 @@ public class Thread extends java.lang.Thread {
             System.out.println(localServerThreadName + " initialised.");
             String inputLine;
 
+
 //            try {
-//                accounts.acquireLock();
-//                accounts.start();
-//                accounts.choices();
+//                account.acquireLock();
+//                account.start();
+//                account.choices();
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
@@ -51,40 +51,5 @@ public class Thread extends java.lang.Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void sendMessage(String message){
-            System.out.println("Outgoing: " + message);
-            out.println(message);
-            out.write('\n');
-            out.flush();
-    }
-
-    public static LinkedBlockingDeque<String> incomingMessage(){
-        LinkedBlockingDeque<String> messageTunnel = new LinkedBlockingDeque<>();
-
-        String inputLine;
-
-        while (true) {
-            try {
-                if (!in.hasNext("")) {
-                    inputLine = in.next();
-                    accounts.acquireLock();
-                    if (!inputLine.trim().isEmpty()) {
-                        System.out.println("Incoming: " + inputLine);
-                        messageTunnel.put(inputLine);
-                    }
-                }
-
-                in.reset();
-
-                return messageTunnel;
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
-
     }
 }
