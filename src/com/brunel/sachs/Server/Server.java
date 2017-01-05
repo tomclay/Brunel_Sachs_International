@@ -1,9 +1,8 @@
-package equity;
+package com.brunel.sachs.Server;
 
 import java.io.IOException;
+import java.lang.*;
 import java.net.ServerSocket;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Tom Clay ESQ. on 12/12/2016.
@@ -18,10 +17,11 @@ public class Server {
         int portNumber = 4545;
 
 
+
         //Create the shared object in the global scope...
         Accounts sharedAccounts = new Accounts();
 
-        // Make the server socket
+        // Make the Server socket
         try {
             MainframeServerSocket = new ServerSocket(portNumber);
         } catch (IOException e) {
@@ -32,10 +32,10 @@ public class Server {
 
         //Got to do this in the correct order with only four clients!  Can automate this...
         while (listening){
-            new accessThread(MainframeServerSocket.accept(), "ServerThread1", sharedAccounts).start();
-            new accessThread(MainframeServerSocket.accept(), "ServerThread2", sharedAccounts).start();
-            new accessThread(MainframeServerSocket.accept(), "ServerThread3", sharedAccounts).start();
-            new accessThread(MainframeServerSocket.accept(), "ServerThread4", sharedAccounts).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread1", sharedAccounts).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread2", sharedAccounts).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread3", sharedAccounts).start();
+            new Thread(MainframeServerSocket.accept(), "ServerThread4", sharedAccounts).start();
             System.out.println("New " + MainframeName + " thread started.");
         }
         MainframeServerSocket.close();

@@ -1,11 +1,10 @@
-package equity;
+package com.brunel.sachs.Client;
 
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
-public class ActionClient4 {
+public class Client1 {
     public static void main(String[] args) throws IOException {
 
         // Set up the socket, in and out variables
@@ -15,7 +14,7 @@ public class ActionClient4 {
         BufferedReader in = null;
         int ActionSocketNumber = 4545;
         String ActionServerName = "localhost";
-        String ActionClientID = "client4";
+        String ActionClientID = "client1";
 
         try {
             ActionClientSocket = new Socket(ActionServerName, ActionSocketNumber);
@@ -33,9 +32,9 @@ public class ActionClient4 {
         String fromServer;
         String fromUser;
 
-        System.out.println("Initialised " + ActionClientID + " client and IO connections");
+        System.out.println("Initialised " + ActionClientID + " Client and IO connections");
 
-        // This is modified as it's the client that speaks first
+        // This is modified as it's the Client that speaks first
 
         while (true) {
 

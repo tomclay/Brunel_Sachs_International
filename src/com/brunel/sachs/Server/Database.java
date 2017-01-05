@@ -1,11 +1,10 @@
-package equity;
+package com.brunel.sachs.Server;
 
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.concurrent.BlockingQueue;
 
 
 /**
@@ -22,7 +21,7 @@ public class Database extends Accounts {
     }
 
     // Get the account from the database
-    public static float get_bal() {
+    public synchronized static float get_bal() {
 
         Connection c;
         Statement stmt;
@@ -62,7 +61,7 @@ public class Database extends Accounts {
     }
 
 
-    public static void update_bal(String amount){
+    public synchronized static void update_bal(String amount){
         Connection c;
         Statement stmt;
         try {
@@ -82,7 +81,7 @@ public class Database extends Accounts {
 
     }
 
-    public static float wire(String dest_account_ID, float amount){
+    public synchronized static float wire(String dest_account_ID, float amount){
         // assuming global source account
 
         float dest_account_bal = 0, dest_account_new_bal = 0;
