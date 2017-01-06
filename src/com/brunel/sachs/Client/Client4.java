@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import static java.lang.Thread.sleep;
 
 
-public class Client1 {
+public class Client4 {
     public static void main(String[] args) throws IOException {
 
         /**
@@ -21,7 +21,7 @@ public class Client1 {
 
         Socket clientSocket = null;
         int socketNumber = 4545;
-        String serverName = "localhost", clientID = "client1";
+        String serverName = "localhost", clientID = "client4";
         Scanner in, clientInput;
         PrintWriter out;
         boolean person = true;
@@ -71,45 +71,45 @@ public class Client1 {
 
         } else {
 
-                /**
-                 * This while loop simulates a human user by using programmed responses and sending them to the server.
-                 */
+            /**
+             * This while loop simulates a human user by using programmed responses and sending them to the server.
+             */
 
-                // Responses storage
-                String[] responses = new String[3];
-                // Add the responses here
-                responses[0] = "1";
-                responses[1] = "2";
-                responses[2] = "100";
+            // Responses storage
+            String[] responses = new String[3];
+            // Add the responses here
+            responses[0] = "1";
+            responses[1] = "2";
+            responses[2] = "100";
 
-                // Limit the number of iterations
-                int count = 0;
-                while (true) {
-                    in = new Scanner(clientSocket.getInputStream());
-                    out = new PrintWriter(clientSocket.getOutputStream(), true);
-                    String serverInput = in.nextLine();
+            // Limit the number of iterations
+            int count = 0;
+            while (true) {
+                in = new Scanner(clientSocket.getInputStream());
+                out = new PrintWriter(clientSocket.getOutputStream(), true);
+                String serverInput = in.nextLine();
 
-                    if (!serverInput.trim().isEmpty()) {
-                        transactionLogging.log(Level.INFO, clientID + " received " + serverInput + " from Brunel Sachs");
-                    }
-
-                    // Stop if there are no more responses
-                    if (!(count < responses.length)) {
-                        break;
-                    }
-
-                    transactionLogging.log(Level.INFO, clientID + " sending " + responses[count] + " to Brunel Sachs");
-                    out.println(responses[count]);
-                    count++;
-
-                    try {
-                        // Separate out the commands with a small gap
-                        sleep(1000);
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                if (!serverInput.trim().isEmpty()) {
+                    transactionLogging.log(Level.INFO, clientID + " received " + serverInput + " from Brunel Sachs");
                 }
+
+                // Stop if there are no more responses
+                if (!(count < responses.length)) {
+                    break;
+                }
+
+                transactionLogging.log(Level.INFO, clientID + " sending " + responses[count] + " to Brunel Sachs");
+                out.println(responses[count]);
+                count++;
+
+                try {
+                    // Separate out the commands with a small gap
+                    sleep(1000);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

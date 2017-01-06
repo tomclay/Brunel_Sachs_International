@@ -4,14 +4,18 @@ import com.brunel.sachs.Server.MessageHandler;
 import com.brunel.sachs.Server.Transaction;
 
 /**
- * Created by Tom Clay ESQ. on 05/01/2017.
+ * Created by Tom Clay ESQ.
  */
 public class Deposit extends Transaction {
 
+    private final int accountNumber;
+    private final float amount;
+
     /**
      * A thread to deposit money into an account
+     *
      * @param accountNumber index of the account
-     * @param amount value to be deposited in the account
+     * @param amount        value to be deposited in the account
      */
     public Deposit(int accountNumber, float amount) {
         this.accountNumber = accountNumber;
@@ -19,8 +23,9 @@ public class Deposit extends Transaction {
     }
 
     @Override
-    public void run(){
+    public void run() {
         this.delay();
+        // This transaction requires a write lock
         this.acquireWriteLock(accountNumber);
         float newBalance = account.deposit(accountNumber, amount);
         MessageHandler.sendMessage(Thread.currentThread() + " deposited " + amount + " in account "
@@ -28,8 +33,5 @@ public class Deposit extends Transaction {
         this.releaseWriteLock(accountNumber);
         choices();
     }
-
-    private final int accountNumber;
-    private final float amount;
 
 }
