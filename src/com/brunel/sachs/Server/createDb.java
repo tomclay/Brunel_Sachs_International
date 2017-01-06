@@ -43,19 +43,19 @@ public class createDb extends Account {
 
             stmt = c.createStatement();
             String sql = "INSERT INTO ACCOUNTS (ID,BALANCE) " +
-                    "VALUES (1307566, 100.00 );";
+                    "VALUES (1, 100.00 );";
             stmt.executeUpdate(sql);
 
             sql = "INSERT INTO ACCOUNTS (ID,BALANCE) " +
-                    "VALUES (123, 148.00 );";
+                    "VALUES (2, 148.00 );";
             stmt.executeUpdate(sql);
 
             sql = "INSERT INTO ACCOUNTS (ID,BALANCE) " +
-                    "VALUES (456, 867.00 );";
+                    "VALUES (3, 867.00 );";
             stmt.executeUpdate(sql);
 
             sql = "INSERT INTO ACCOUNTS (ID,BALANCE) " +
-                    "VALUES (789, 372.00 );";
+                    "VALUES (4, 372.00 );";
             stmt.executeUpdate(sql);
 
             stmt.close();

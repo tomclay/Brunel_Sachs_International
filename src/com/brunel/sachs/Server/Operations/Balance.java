@@ -24,9 +24,10 @@ public class Balance extends Transaction {
     public void run(){
         this.delay();
         this.acquireReadLock(accountNumber);
-        System.out.println(Thread.currentThread() + " Account " + accountNumber
-                + " balance: " + account.getBalance(accountNumber));
+        MessageHandler.sendMessage(Thread.currentThread() + " Account " + accountNumber
+                + " balance: " + account.getBalance(accountNumber) + ". What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds");
         this.releaseReadLock(accountNumber);
+        choices();
     }
 
     private final int accountNumber;

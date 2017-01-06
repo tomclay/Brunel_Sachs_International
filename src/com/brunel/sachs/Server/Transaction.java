@@ -1,24 +1,148 @@
 package com.brunel.sachs.Server;
 
-import java.lang.*;
-import java.lang.Thread;
+import com.brunel.sachs.Server.Operations.*;
+import java.net.Socket;
 import java.util.Random;
+
+
+/**
+ * To-do
+ * Why does the acc ID disappear?
+ * Test all account methods individually
+ * Tidy up code
+ * test with 4 clients
+ * develop test script
+ * Add comments
+ */
 
 /**
  * Created by Tom Clay ESQ. on 05/01/2017.
  */
-public abstract class Transaction extends java.lang.Thread {
+public class Transaction extends java.lang.Thread {
 
     protected static Account account;
     private static MessageHandler messageHandler;
     private final Random r = new Random();
+    private int account_ID;
+    Socket s_socket;
+    private String threadName;
 
-    public Transaction(Account account, MessageHandler messageHandler){
+
+    public Transaction(Socket formServer, Account account, String name) {
         this.account = account;
-        this.messageHandler = messageHandler;
+        this.s_socket = formServer;
+        this.threadName = name;
+
     }
 
+
     protected Transaction() {
+    }
+
+    public void run(){
+
+        messageHandler = new MessageHandler(s_socket);
+
+        messageHandler.sendMessage("Welcome to Brunel Sachs International. Please enter your account number");
+
+        try {
+            account_ID =  Integer.parseInt(messageHandler.incomingMessage().take());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        messageHandler.sendMessage("What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds");
+
+        choices();
+
+    }
+
+
+        protected void choices(){
+
+        int user_choice = 0;
+
+        while (true)
+        {
+            try {
+                user_choice = Integer.parseInt(messageHandler.incomingMessage().take());
+                break;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        switch (user_choice){
+            case 1: new Balance(account_ID).start();
+                break;
+            case 2: start_deposit();
+                break;
+            case 3: start_withdraw();
+                break;
+            case 4: start_transfer();
+                break;
+        }
+
+        user_choice = 0;
+
+    }
+
+    protected void start_deposit(){
+
+        messageHandler.sendMessage("Please enter the amount to deposit.");
+
+        float deposit = 00;
+        try {
+            deposit = Float.parseFloat(messageHandler.incomingMessage().take());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new Deposit(account_ID, deposit).start();
+
+    }
+
+    protected void start_withdraw(){
+
+
+        messageHandler.sendMessage("Please enter the amount to withdraw.");
+
+        float withdrawal = 00;
+        try {
+            withdrawal = Float.parseFloat(messageHandler.incomingMessage().take());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new Withdraw(account_ID, withdrawal).start();
+
+    }
+
+    protected void start_transfer(){
+
+        messageHandler.sendMessage("Please enter the account number of the recipient.");
+
+        int recip_acc_ID = 0;
+
+        try {
+            recip_acc_ID = Integer.parseInt(messageHandler.incomingMessage().take());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        messageHandler.sendMessage("And the amount you wish to transfer.");
+
+        float amount = 00;
+
+
+        try {
+            amount = Float.parseFloat(messageHandler.incomingMessage().take());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new Transfer(account_ID, recip_acc_ID, amount);
     }
 
     /**
@@ -85,111 +209,6 @@ public abstract class Transaction extends java.lang.Thread {
         this.sleep(r.nextInt(100));
     }
 
-
-
-
-
 }
 
 
-
-//    public void choices(){
-//
-//
-//        int user_choice = 0;
-//
-//        while (true)
-//        {
-//            try {
-//                user_choice = Integer.parseInt(Thread.incomingMessage().take());
-//                break;
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//
-//        switch (user_choice){
-//            case 1: balance();
-//                break;
-//            case 2: deposit();
-//                break;
-//            case 3: withdraw();
-//                break;
-//            case 4: transfer();
-//                break;
-//            case 5: exit();
-//                break;
-//            default: exit();
-//                break;
-//        }
-//
-//        user_choice = 0;
-//
-//    }
-
-//    public void deposit() {
-//
-//        Thread.sendMessage("Please enter the amount to deposit.");
-//
-//        String amount = "";
-//        try {
-//            releaseLock();
-//            amount = Thread.incomingMessage().take();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        float result =
-//        Thread.sendMessage("Your new balance is: £" + database.accBalance + ". What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds 5. Exit");
-//        releaseLock();
-//        choices();
-//    }
-
-
- //   public void withdraw() {
-//        Thread.sendMessage("Please enter the amount to withdraw.");
-//        float amount = 0;
-//
-//        try {
-//            releaseLock();
-//            amount = Float.parseFloat(Thread.incomingMessage().take());
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        float result = Database.subtract(amount);
-//        Thread.sendMessage("Your new balance is: £" + database.accBalance + ". What would you like to do? 1. See my balance 2. Deposit funds 3. Withdraw funds 4. Transfer funds 5. Exit");
-//        releaseLock();
-//        choices();
-//
-//    }
-//
-//
-//    public void transfer() {
-//
-//        Thread.sendMessage("Please enter the ID of the account you wish to transfer money to.");
-//
-//        try {
-//            releaseLock();
-//            String ID = Thread.incomingMessage().take();
-//
-//        Thread.sendMessage("Please enter the amount you wish to transfer.");
-//        float amount = Float.parseFloat(input.nextLine());
-//        float dest_account_new_bal = database.wire(ID,amount);
-//        Thread.sendMessage("The account " + ID + " now has the balance of £" + dest_account_new_bal);
-//        releaseLock();
-//        choices();
-//
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void exit(){
-//        Thread.sendMessage("Thank you for using Brunel Sachs International. Have a jolly nice day.");
-//        releaseLock();
-//        //System.exit(0);
-//
-//    }

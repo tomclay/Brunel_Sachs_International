@@ -99,12 +99,19 @@ public class Account {
         return newBalance;
     }
 
-    public static float withdraw(int i, int newBalance) {
-        return Database.subtract(i,newBalance);
+    public static float withdraw(int i, float amount) {
+        float oldBalance = Database.get_bal(i);
+        float newBalance = oldBalance + amount;
+        Database.update_bal(i, newBalance);
+        return newBalance;
     }
 
-    public static float transfer(int i, int y, int amount) {
-        return Database.wire(i,y,amount);
+    public static float transfer(int i, int y, float amount) {
+        float dest_account_new_bal = 0;
+        withdraw(i,amount);
+        dest_account_new_bal = deposit(y,amount);
+        return dest_account_new_bal;
+
     }
 
 

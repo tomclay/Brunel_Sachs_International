@@ -60,17 +60,4 @@ public class Database extends Account {
         }
 
     }
-
-    public synchronized static float wire(int orig_acc_ID, int dest_acc_ID, float amount){
-        // assuming global source account
-
-        float dest_account_new_bal = 0;
-
-        // frist, subtract the to-be-moved amount from the source account
-        subtract(orig_acc_ID,amount);
-        dest_account_new_bal = add(dest_acc_ID, amount);
-
-        return dest_account_new_bal;
-
-    }
 }
